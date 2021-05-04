@@ -11,6 +11,10 @@ namespace WindowsCalculator
         int ArgumentCount { get; }
         /// <summary>Gets or sets the evaluate delegate.</summary>
         /// <value>The evaluate delegate.</value>
-        MathEvaluate Evaluate { get; set; }
+        MathEvaluate Evaluate
+        { 
+            get;
+            set;
+        }
     }
 }
