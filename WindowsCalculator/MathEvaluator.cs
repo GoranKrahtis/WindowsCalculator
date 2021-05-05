@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace WindowsCalculator
 {
@@ -66,18 +67,25 @@ namespace WindowsCalculator
         {
             if (string.IsNullOrEmpty(expression))
                 throw new ArgumentNullException("expression");
+            try
+            {
+                _expressionReader = new StringReader(expression);
+                _symbolStack.Clear();
+                _nestedGroupDepth = 0;
+                _expressionQueue.Clear();
 
-            _expressionReader = new StringReader(expression);
-            _symbolStack.Clear();
-            _nestedGroupDepth = 0;
-            _expressionQueue.Clear();
+                ParseExpressionToQueue();
 
-            ParseExpressionToQueue();
+                double result = CalculateFromQueue();
 
-            double result = CalculateFromQueue();
-
-            _variables[AnswerVariable] = result;
-            return result;
+                _variables[AnswerVariable] = result;
+                return result;
+            }
+            catch (ArgumentNullException e)
+            {
+                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return 0;
+            }            
         }
 
         private void ParseExpressionToQueue()
@@ -114,13 +122,12 @@ namespace WindowsCalculator
                 if (TryEndGroup())
                     continue;
                 throw new ParseException(Resources.InvalidCharacterEncountered + _currentChar);
-            } while (_expressionReader.Peek() != -1);
+            }
+            while (_expressionReader.Peek() != -1);
 
             ProcessSymbolStack();
         }
-
-        
-
+               
         private bool TryString()
         {
             if (!char.IsLetter(_currentChar))
@@ -169,7 +176,7 @@ namespace WindowsCalculator
                 return false;
 
             char nextChar = PeekNextNonWhitespaceChar();
-            if (nextChar == ')' || nextChar == ',')
+            if (nextChar == ',')
             {
                 throw new ParseException(Resources.InvalidCharacterEncountered + _currentChar);
             }
@@ -257,7 +264,7 @@ namespace WindowsCalculator
             bool isNumber = NumberExpression.IsNumber(_currentChar);
             // only negative when last char is group start or symbol
             bool isNegative = NumberExpression.IsNegativeSign(_currentChar) &&
-                              (lastChar == '\0' || lastChar == '(' || OperatorExpression.IsSymbol(lastChar));
+                              (lastChar == '\0' || OperatorExpression.IsSymbol(lastChar));
 
             if (!isNumber && !isNegative)
                 return false;
@@ -273,8 +280,7 @@ namespace WindowsCalculator
                 p = (char)_expressionReader.Peek();
             }
 
-            double value;
-            if (!(double.TryParse(_buffer.ToString(), out value)))
+            if (!(double.TryParse(_buffer.ToString(), out double value)))
                 throw new ParseException(Resources.InvalidNumberFormat + _buffer);
 
             NumberExpression expression = new NumberExpression(value);

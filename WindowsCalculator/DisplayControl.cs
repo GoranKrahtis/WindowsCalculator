@@ -77,7 +77,7 @@ namespace WindowsCalculator
                 if (UserEnteredParentheses)
                     result += UpdatedValue;
                 else
-                    result = ReplaceLastOccurrence(Source: result, Find: this.Value, Replace: UpdatedValue);
+                    result = ReplaceLastOccurrence(Source: result, Find: Value, Replace: UpdatedValue);
             else
                 result += NewValue;
 
@@ -91,7 +91,6 @@ namespace WindowsCalculator
 
             if (place == -1)
                 return Source;
-
 
             string result = Source.Remove(place, Find.Length).Insert(place, Replace);
             return result;
@@ -146,11 +145,11 @@ namespace WindowsCalculator
             }
             catch (IndexOutOfRangeException e)
             {
-                MessageBox.Show(e.Message, "Error",MessageBoxButton.OK,MessageBoxImage.Error);
+                Text = e.Message;
             }
             catch (ArgumentOutOfRangeException e)
             {
-                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Text = e.Message;
             }
 
             try
@@ -159,11 +158,11 @@ namespace WindowsCalculator
             }
             catch (IndexOutOfRangeException e)
             {
-                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Text = e.Message;
             }
             catch (ArgumentOutOfRangeException e)
             {
-                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Text = e.Message;
             }
         }
     }

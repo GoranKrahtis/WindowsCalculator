@@ -12,68 +12,84 @@ namespace WindowsCalculator.Metadata
     {
         public static string GetDescription<T>(T instance)
         {
-            if (instance == null)
-                throw new ArgumentNullException("instance");
+            try
+            {
+                string result = instance.ToString();
 
-            string result = instance.ToString();
+                Type type = instance.GetType();
+                MemberInfo[] members = type.GetMember(result);
 
-            Type type = instance.GetType();
-            MemberInfo[] members = type.GetMember(result);
+                if (members == null || members.Length == 0)
+                    return result;
 
-            if (members == null || members.Length == 0)
-                return result;
-
-            return GetDescription(members[0]);
+                return GetDescription(members[0]);
+            }
+            catch(ArgumentNullException e)
+            {
+                return e.Message;
+            }            
         }
 
         public static string GetDescription(MemberInfo info)
         {
-            if (info == null)
-                throw new ArgumentNullException("info");
+            try
+            {
+                string result = info.Name;
 
-            string result = info.Name;
+                object[] attributes = info.GetCustomAttributes(typeof(DescriptionAttribute), false);
+                if (attributes == null || attributes.Length == 0)
+                    return result;
 
-            object[] attributes = info.GetCustomAttributes(typeof(DescriptionAttribute), false);
-            if (attributes == null || attributes.Length == 0)
-                return result;
+                if (!(attributes[0] is DescriptionAttribute description) || string.IsNullOrEmpty(description.Description))
+                    return result;
 
-            if (!(attributes[0] is DescriptionAttribute description) || string.IsNullOrEmpty(description.Description))
-                return result;
-
-            return description.Description;
+                return description.Description;
+            }
+            catch (ArgumentNullException e)
+            {
+                return e.Message;
+            }            
         }
 
         public static string GetAbbreviation<T>(T instance)
         {
-            if (instance == null)
-                throw new ArgumentNullException("instance");
+            try
+            {
+                string result = instance.ToString();
 
-            string result = instance.ToString();
+                Type type = instance.GetType();
+                MemberInfo[] members = type.GetMember(result);
 
-            Type type = instance.GetType();
-            MemberInfo[] members = type.GetMember(result);
+                if (members == null || members.Length == 0)
+                    return result;
 
-            if (members == null || members.Length == 0)
-                return result;
-
-            return GetAbbreviation(members[0]);
+                return GetAbbreviation(members[0]);
+            }
+            catch (ArgumentNullException e)
+            {
+                return e.Message;
+            }            
         }
 
         public static string GetAbbreviation(MemberInfo info)
         {
-            if (info == null)
-                throw new ArgumentNullException("info");
+            try
+            {
+                string result = info.Name;
 
-            string result = info.Name;
+                object[] attributes = info.GetCustomAttributes(typeof(AbbreviationAttribute), false);
+                if (attributes == null || attributes.Length == 0)
+                    return result;
 
-            object[] attributes = info.GetCustomAttributes(typeof(AbbreviationAttribute), false);
-            if (attributes == null || attributes.Length == 0)
-                return result;
+                if (!(attributes[0] is AbbreviationAttribute abbreviation) || string.IsNullOrEmpty(abbreviation.Text))
+                    return result;
 
-            if (!(attributes[0] is AbbreviationAttribute abbreviation) || string.IsNullOrEmpty(abbreviation.Text))
-                return result;
-
-            return abbreviation.Text;
+                return abbreviation.Text;
+            }
+            catch(ArgumentNullException e)
+            {
+                return e.Message;
+            }
         }
     }
 }

@@ -81,12 +81,6 @@ namespace WindowsCalculator
             return result ?? 0;
         }
 
-        public double Power(double[] numbers)
-        {
-            Validate(numbers);
-            return Math.Pow(numbers[0], numbers[1]);
-        }
-
         public static bool IsSymbol(char c)
         {
             return Array.Exists(operatorSymbols, delegate (char s) { return s == c; });
@@ -97,12 +91,12 @@ namespace WindowsCalculator
             get { return 2; }
         }
 
-        public OperatorExpression(string @operator)
+        public OperatorExpression(string _operator)
         {
-            if (string.IsNullOrEmpty(@operator))
+            if (string.IsNullOrEmpty(_operator))
                 throw new ArgumentNullException("operator");
 
-            switch (@operator)
+            switch (_operator)
             {
                 case "+":
                     base.Evaluate = new MathEvaluate(Add);
@@ -126,7 +120,7 @@ namespace WindowsCalculator
                     break;
 
                 default:
-                    throw new ArgumentException(Resources.InvalidOperator + @operator, "operator");
+                    throw new ArgumentException(Resources.InvalidOperator + _operator, "operator");
             }
         }
 
