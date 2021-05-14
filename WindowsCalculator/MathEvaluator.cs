@@ -294,8 +294,6 @@ namespace WindowsCalculator
             while (_symbolStack.Count > 0)
             {
                 string p = _symbolStack.Pop();
-                if (p.Length == 1 && p == "(")
-                    throw new ParseException(Resources.UnbalancedParentheses);
 
                 IExpression e = GetExpressionFromSymbol(p);
                 _expressionQueue.Enqueue(e);
@@ -305,7 +303,10 @@ namespace WindowsCalculator
         private IExpression GetExpressionFromSymbol(string p)
         {
             IExpression e;
-            if (OperatorExpression.IsSymbol(Convert.ToChar(p)))
+            
+            if (_expressionCache.ContainsKey(p))
+                e = _expressionCache[p];
+            else if (OperatorExpression.IsSymbol(Convert.ToChar(p)))
             {
                 e = new OperatorExpression(p);
                 _expressionCache.Add(p, e);
